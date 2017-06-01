@@ -642,7 +642,8 @@ namespace XmlSchemaClassGenerator
             {
                 var propertyName = isNullableValueType && Configuration.GenerateNullables ? Name + "Value" : Name;
                 member = new CodeMemberField(typeReference, propertyName);
-                var isPrivateSetter = IsCollection || isArray;
+                // No private setters
+                var isPrivateSetter = false;
                 if (requiresBackingField)
                 {
                     member.Name += GetAccessors(member.Name, backingField.Name,
