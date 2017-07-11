@@ -790,9 +790,16 @@ namespace XmlSchemaClassGenerator
                 specifiedProperty.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 
                 var listReference = new CodePropertyReferenceExpression(new CodeThisReferenceExpression(), Name);
+
+                var nullReference = new CodePrimitiveExpression(null);
+                var notNullExpression = new CodeBinaryOperatorExpression(listReference, CodeBinaryOperatorType.IdentityInequality, nullReference);
+
                 var countReference = new CodePropertyReferenceExpression(listReference, "Count");
                 var notZeroExpression = new CodeBinaryOperatorExpression(countReference, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression(0));
-                var returnStatement = new CodeMethodReturnStatement(notZeroExpression);
+
+                var combinedExpression = new CodeBinaryOperatorExpression(notNullExpression, CodeBinaryOperatorType.BooleanAnd, notZeroExpression);
+
+                var returnStatement = new CodeMethodReturnStatement(combinedExpression);
                 specifiedProperty.GetStatements.Add(returnStatement);
 
                 var specifiedDocs = new[] { new DocumentationModel { Language = "en", Text = string.Format("Gets a value indicating whether the {0} collection is empty.", Name) },
